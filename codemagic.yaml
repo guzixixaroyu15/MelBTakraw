@@ -5,7 +5,7 @@ workflows:
     instance_type: mac_mini_m2
 
     integrations:
-      app_store_connect: CM_APP_STORE_CONNECT
+      app_store_connect: codemagic
 
     environment:
       ios_signing:
