@@ -1,0 +1,71 @@
+workflows:
+  ios-testflight:
+    name: MelB Takraw Lab iOS TestFlight
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+
+    integrations:
+      app_store_connect: CM_APP_STORE_CONNECT
+
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.melb.takrawlab
+      vars:
+        XCODE_PROJECT: "MelBTakrawLab.xcodeproj"
+        XCODE_SCHEME: "MelBTakrawLab"
+        BUNDLE_ID: "com.melb.takrawlab"
+        APP_STORE_APPLE_ID: ""
+      xcode: latest
+      cocoapods: default
+
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+
+    scripts:
+      - name: Show Xcode version
+        script: xcodebuild -version
+
+      - name: Resolve Swift packages
+        script: |
+          xcodebuild -project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            -resolvePackageDependencies
+
+      - name: Set up code signing
+        script: |
+          xcode-project use-profiles \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+      - name: Increment build number
+        script: |
+          cd "$CM_BUILD_DIR"
+          BUILD_NUMBER="${CM_BUILD_ID}"
+          if [ -n "$APP_STORE_APPLE_ID" ]; then
+            LATEST_BUILD_NUMBER=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID" || echo 0)
+            BUILD_NUMBER=$(("$LATEST_BUILD_NUMBER" + 1))
+          fi
+          agvtool new-version -all "$BUILD_NUMBER"
+
+      - name: Build IPA
+        script: |
+          xcode-project build-ipa \
+            --project "$CM_BUILD_DIR/$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.app
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        submit_to_app_store: false

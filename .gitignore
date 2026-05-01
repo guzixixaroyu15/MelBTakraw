@@ -1,0 +1,40 @@
+# macOS
+.DS_Store
+
+# Xcode user data
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+
+# Xcode build products
+DerivedData/
+build/
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/**/.build/
+Packages/**/.swiftpm/
+
+# CocoaPods / Carthage / Fastlane artifacts
+Pods/
+Carthage/Build/
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# Secrets and local overrides
+.env
+.env.*
+*.p8
+*.p12
+*.mobileprovision
+GoogleService-Info.plist
+
+# Codemagic local helper files
+codemagic.env
