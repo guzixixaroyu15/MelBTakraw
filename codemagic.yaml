@@ -15,7 +15,7 @@ workflows:
         XCODE_PROJECT: "MelBTakrawLab.xcodeproj"
         XCODE_SCHEME: "MelBTakrawLab"
         BUNDLE_ID: "com.melb.takrawlab"
-        APP_STORE_APPLE_ID: ""
+        APP_STORE_APPLE_ID: "6765769092"
       xcode: latest
       cocoapods: default
 
